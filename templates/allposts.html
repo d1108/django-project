@@ -1,0 +1,355 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Drishya-Allposts</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="{{hey.img.url}}" rel="icon">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Herr+Von+Muellerhoff" rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'css2/open-iconic-bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css2/animate.css' %}">
+    
+    <link rel="stylesheet" href="{% static 'css2/owl.carousel.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css2/owl.theme.default.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css2/magnific-popup.css' %}">
+
+    <link rel="stylesheet" href="{% static 'css2/aos.css' %}">
+
+    <link rel="stylesheet" href="{% static 'css2/ionicons.min.css' %}">
+
+    <link rel="stylesheet" href="{% static 'css2/bootstrap-datepicker.css' %}">
+    <link rel="stylesheet" href="{% static 'css2/jquery.timepicker.css' %}">
+
+    
+    <link rel="stylesheet" href="{% static 'css2/flaticon.css' %}">
+    <link rel="stylesheet" href="{% static 'css2/icomoon.css' %}">
+    <link rel="stylesheet" href="{% static 'css2/style.css' %}">
+    <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+  </head>
+  <body>
+
+	<div id="colorlib-page">
+		<a href="#" class="js-colorlib-nav-toggle colorlib-nav-toggle"><i></i></a>
+		<aside id="colorlib-aside" role="complementary" class="js-fullheight text-center">
+      {% if user.is_authenticated %}
+      <h1 id="colorlib-logo"><a href="mine"><span class="img" style="background-image: url({{prof.img.url}});"></span>{{user.username}}<br><h6>{{prof.mobile_no}}</h6><h6>Wallet : ${{prof.wallet}}</h6></a></h1>
+			<nav id="colorlib-main-menu" role="navigation">
+				<ul>
+          
+					<li class="colorlib-active"><a href="allposts">ALL POSTS</a></li>
+          <li><a href="addwallet">ADD MONEY</a></li>
+          <li><a href="getwallet">GET MONEY</a></li>
+          <li><a href="logout">LOGOUT</a></li>
+          {% endif %}
+					<br>
+          <br>
+          <br>
+          <form action="addposts">
+          <input type="submit" class="button2" value=+>
+          </form>
+				</ul>
+			</nav>			
+    </aside> <!-- END COLORLIB-ASIDE -->
+    
+    {% for dest in dests %}
+      
+		<div id="colorlib-main">
+      <br>
+			<div  class="featured-item center ">  
+				<img src="{{dest.img.url}}" id="{{dest.id}}" style="width:500px;height:350px;cursor:pointer" >
+        <h4><span><a href="{% url 'drishya:myposts' dest.id %}"><button class="img1" style="background-image: url({{dest.profile_pic.url}});background-size: 25px 25px;"></button><font color="Black">{{dest.name}}</font></a></h4><h6><font color = "black">{{dest.mobile_no}}</font></h6></span>
+        <h5><font color="black">{{dest.caption}}</font></h5> 
+        
+        
+        
+        <div><h5><button class="button"  id="new{{dest.id}}" onclick="testFunction('{{dest.id}}')" style="display: inline-block;">like</button><button class="newbutton"  id="hey{{dest.id}}" onclick="NewtestFunction('{{dest.id}}')" style="display: none;">dislike</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;❤{{dest.likes}} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ${{dest.price}} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{%if dest.purchased %}{{dest.purchased}} {% elif dest.name != request.user.username %} <a href="{% url 'drishya:payment' dest.id %}">Buy</a>{% endif %}</h5></div>
+        {% for new in new1 %}
+        {% if new.img_id == dest.id %}
+        <script>
+         document.getElementById("new{{dest.id}}").style.display = "none"
+         document.getElementById("hey{{dest.id}}").style.display = "inline-block"
+        </script>
+        
+        {% elif new.img_id is None %}
+        <script>
+          document.getElementById("new{{dest.id}}").style.display = "none"
+          document.getElementById("hey{{dest.id}}").style.display = "inline-block"
+         </script> 
+        {% endif %} 
+        {% endfor %}
+
+      </div> 
+    </div>
+    
+    
+<script>
+  
+
+  //document.getElementById("test").addEventListener('click', testFunction())
+  function testFunction(destId){
+   var liked = destId;
+      $.ajax({
+        type: "POST",
+        url: "{% url 'drishya:like' %}",
+        data: { csrfmiddlewaretoken: '{{ csrf_token }}', liked : liked },
+        success: function callback(response){
+                   console.log(response);
+                }
+     });
+     location.reload();
+     
+  }
+  function NewtestFunction(destId){
+    var disliked = destId;
+       $.ajax({
+         type: "POST",
+         url: "{% url 'drishya:dislike' %}",
+         data: { csrfmiddlewaretoken: '{{ csrf_token }}', disliked : disliked },
+         success: function callback(response){
+                    console.log(response);
+                 }
+      });
+      location.reload();
+      
+   }
+
+</script>
+<style>
+.button2{
+	border-radius: 60%;
+	background-color: white;
+	border: 2px solid grey;
+	height: 60px;
+	width: 60px;
+}
+.button2:hover{
+	border: 2px solid black;
+	height: 70px;
+	width: 70px;
+}
+.newbutton{
+  background-color: red;
+  color: white;
+  border: 2px solid red;
+  border-radius: 12px;
+}
+.newbutton:hover{
+  background-color: white;
+  color: #000000;
+}
+
+.button {
+  transition-duration: 0.4s;
+  background-color: white;
+  color: black;
+  border: 2px solid red;
+  border-radius: 12px; 
+}
+
+.button:hover {
+  background-color: red; 
+  color: white;
+}
+.img1{
+  border-radius: 60%;
+  border: 2px solid white;
+  height: 25px;
+  width: 25px
+}
+.button:focus{
+  transition-duration: 0.4s;
+  background-color: red;
+  color: white;
+  border: 2px solid white;
+  border-radius: 12px;
+}
+.button:focus:hover{
+  background-color: white;
+  color: red;
+}
+
+.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+}
+
+.featured-item {
+	width:550px;
+	height:auto;
+	border-radius: 5px;
+	border: 1px solid #000000;
+	padding: 20px;
+	transition: all 0.5s;
+}
+.featured-item:hover {
+	opacity: 0.9;
+}
+
+.featured-item h4 {
+	font-size: 17px;
+	font-weight: 700;
+	color: #1e1e1e;
+	margin-top: 15px;
+	transition: all 0.5s;
+}
+.featured-item:hover h4 {
+	color: #3a8bcd;
+}
+.featured-item h6 {
+	color: #3a8bcd;
+	font-size: 15px;
+	font-weight: 700;
+	margin-bottom: 0px;
+}
+
+</style>
+<div id="myModal" class="modal">
+                    
+  <!-- The Close Button -->
+  <span class="close">&times;</span>
+
+  <!-- Modal Content (The Image) -->
+  <img class="modal-content" id="img01">
+
+  <!-- Modal Caption (Image Text) -->
+  <div id="caption"></div>
+</div>
+<style>
+/* Style the Image Used to Trigger the Modal */
+#myImg {
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+#myImg:hover {opacity: 0.7;}
+
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.9); /* Black w/ opacity */
+}
+
+/* Modal Content (Image) */
+.modal-content {
+  margin: auto;
+  display: block;
+  width: 80%;
+  max-width: 700px;
+}
+
+/* Caption of Modal Image (Image Text) - Same Width as the Image */
+#caption {
+  margin: auto;
+  display: block;
+  width: 80%;
+  max-width: 700px;
+  text-align: center;
+  color: #ccc;
+  padding: 10px 0;
+  height: 150px;
+}
+
+/* Add Animation - Zoom in the Modal */
+.modal-content, #caption {
+  animation-name: zoom;
+  animation-duration: 0.6s;
+}
+
+@keyframes zoom {
+  from {transform:scale(0)}
+  to {transform:scale(1)}
+}
+
+/* The Close Button */
+.close {
+  position: absolute;
+  top: 15px;
+  right: 35px;
+  color: #f1f1f1;
+  font-size: 40px;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.close:hover,
+.close:focus {
+  color: #bbb;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* 100% Image Width on Smaller Screens */
+@media only screen and (max-width: 700px){
+  .modal-content {
+    width: 100%;
+  }
+}
+</style>
+<script type="text/javascript">
+  var modal = document.getElementById("myModal");
+
+// Get the image and insert it inside the modal - use its "alt" text as a caption
+var img = document.getElementById("{{dest.id}}");
+var modalImg = document.getElementById("img01");
+var captionText = document.getElementById("caption");
+img.onclick = function(){
+  modal.style.display = "block";
+  modalImg.src = this.src;
+  captionText.innerHTML = this.alt;
+}
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+  modal.style.display = "none";
+}
+</script>
+{% endfor %}
+
+  <!-- loader -->
+  <div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00"/></svg></div>
+
+
+  <script src="{% static 'js2/jquery.min.js' %}"></script>
+  <script src="{% static 'js2/jquery-migrate-3.0.1.min.js' %}"></script>
+  <script src="{% static 'js2/popper.min.js' %}"></script>
+  <script src="{% static 'js2/bootstrap.min.js' %}"></script>
+  <script src="{% static 'js2/jquery.easing.1.3.js' %}"></script>
+  <script src="{% static 'js2/jquery.waypoints.min.js' %}"></script>
+  <script src="{% static 'js2/jquery.stellar.min.js' %}"></script>
+  <script src="{% static 'js2/owl.carousel.min.js' %}"></script>
+  <script src="{% static 'js2/jquery.magnific-popup.min.js' %}"></script>
+  <script src="{% static 'js2/aos.js' %}"></script>
+  <script src="{% static 'js2/jquery.animateNumber.min.js' %}"></script>
+  <script src="{% static 'js2/bootstrap-datepicker.js' %}"></script>
+  <script src="{% static 'js2/jquery.timepicker.min.js' %}"></script>
+  <script src="{% static 'js2/scrollax.min.js' %}"></script>
+  <script src="{% static 'https://maps.googleapis.com/maps/api/js?key=AIzaSyBVWaKrjvy3MaE7SQ74_uJiULgl1JY0H2s&sensor=false"></script>
+  <script src="{% static 'js2/google-map.js"></script>
+  <script src="{% static 'js2/main.js' %}"></script>
+  <script src="http://code.jquery.com/ui/1.12.1/jquery-ui.min.js">
+  </script>
+  <script src="http://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <script src="http://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <script src="http://code.jquery.com/ui/1.12.1/jquery-ui.min.js">
+  </script> 
+  </body>
+</html>
